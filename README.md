@@ -1,2 +1,2 @@
 # ck101captcha.py
-rewrite with python
+rewrite with python3
