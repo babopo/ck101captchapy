@@ -8,7 +8,8 @@ import cv2
 from scipy import misc
 from skimage import morphology
 from matplotlib import pyplot as plt
-import normal
+import shutil
+import extra  # 自定义函数
 
 
 def filename(file):  # 读取目录下特定顺序文件
@@ -37,6 +38,7 @@ flags = cv2.KMEANS_RANDOM_CENTERS  # 随机初始中心
 compactness, labels, centers = cv2.kmeans(samples, K, None, criteria, 10, flags)
 K_img = labels.reshape(m, n)
 
+os.mkdir(".\\temp\\")  # 用于储存分离出来的字符图片
 for i in range(K):
     LAB_BW = np.zeros([m, n]).astype(int)  # 类图 防止浅拷贝
     for row in range(m):
@@ -74,22 +76,26 @@ for i in range(K):
                 for col in range(w):
                     cut[row][col] = LAB_BW[high[0][0] + row][width[0][0] + col]
             pos = width[0][0] / 120
-            cut_n = normal.normal(cut).astype(float)  # 转为float类型以便opencv显示
+            cut_n = extra.normal(cut).astype(float)  # 转为float类型以便opencv显示
             cv2.imshow(windowname, cut_n)
             savename = ".\\temp\\" + str(pos) + ".png"  # 相对路径，方便修改
             misc.imsave(savename, cut_n)  # 将array保存为图像
+# extra.xls_clear("feature.xls")
+fea = np.zeros([4, 16])
 for i in range(0, len(os.listdir(".\\temp\\"))):
     temp = os.path.join(".\\temp\\", filename(i))
     I = cv2.imread(temp, 0)  # 单个字符图像，单通道读取
     m_s, n_s = I.shape  # 提取4*4粗网格特征，统计每个网格黑点数
-    numB = np.zeros([4, 4]).astype(int)
+    numB = np.zeros([4, 4])
     for row in range(m_s):
         for col in range(n_s):
             rowB = math.floor(row / 7)
             colB = math.floor(col / 7)
             if I[row][col] == 0:
                 numB[rowB][colB] = numB[rowB][colB] + 1
-    fea = numB.reshape(1, 16)  # 16位向量作为特征储存
-
+    feature = numB.reshape(1, 16)  # 16位向量作为特征储存
+    # extra.xls_append("feature.xls", fea)
+    fea[i] = feature[0]
+shutil.rmtree(".\\temp\\")
 cv2.waitKey(0)
 cv2.destroyAllWindows()
