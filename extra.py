@@ -2,6 +2,7 @@
 import numpy as np
 import xlrd
 from xlutils.copy import copy
+from scipy import stats
 
 
 # 清空excel工作表中的数据
@@ -51,6 +52,39 @@ def normal(I):
                 pix[0][1] = 1
             imgn[row][col] = I[round(pix[0][0])][round(pix[0][1])]
     return imgn
+
+
+# KNN，inx为测试数据，data为样本数据，labels为样本的标签数据
+def knn(inx, data, labels, k):
+    datarow = data.shape[0]
+    diffMat = np.tile(inx, (datarow, 1)) - data
+    sumDist = ((diffMat ** 2).sum(axis=1) ** 0.5)  # 测试数据与个样本的距离，按行求和
+    # distanceMat = np.sort(pow(sumMat, 0.5))  # 测试数据与所有样本数据距离，并按升序排序
+    sortedIndices = np.argsort(sumDist, axis=0)  # 按列排序，返回升序索引
+    if sumDist[sortedIndices[k-1]] > 10:  # 去除预处理中未能处理的部分噪声
+        return 0
+    else:
+        votenum = {}
+        for i in range(k):
+            votelabel = labels[sortedIndices[i]]
+            votenum[votelabel] = votenum.get(votelabel, 0) + 1  # 统计各标签出现次数
+        maxCount = 0
+        # 得到频率最高标签的index
+        for key, value in votenum.items():
+            if value > maxCount:
+                maxCount = value
+                maxIndex = key
+        return maxIndex
+
+
+# 将label的二进制数转化为十进制便于分类
+def b2d(labels):
+    row, col = labels.shape
+    lab = np.zeros([row, 1])
+    for i in range(0, row):
+        for j in range(0, col):
+            lab[i] = lab[i] + labels[i, j]*(pow(2, (col - j - 1)))
+    return lab
 
 
 # 对字符分类
