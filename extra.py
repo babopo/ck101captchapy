@@ -64,7 +64,7 @@ def knn(inx, data, labels, k):
     if sumDist[sortedIndices[k-1]] > 10:  # 去除预处理中未能处理的部分噪声
         return 0
     else:
-        votenum = {}
+        votenum = {}  #可append
         for i in range(k):
             votelabel = labels[sortedIndices[i]]
             votenum[votelabel] = votenum.get(votelabel, 0) + 1  # 统计各标签出现次数

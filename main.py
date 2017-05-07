@@ -81,7 +81,7 @@ for i in range(K):
             savename = ".\\temp\\" + str(pos) + ".png"  # 相对路径，方便修改
             misc.imsave(savename, cut_n)  # 将array保存为图像
 # extra.xls_clear("feature.xls")
-fea = np.zeros([4, 16])
+fea = np.zeros([4, 16]).astype(int)
 for i in range(0, len(os.listdir(".\\temp\\"))):
     temp = os.path.join(".\\temp\\", filename(i))
     I = cv2.imread(temp, 0)  # 单个字符图像，单通道读取
@@ -96,6 +96,9 @@ for i in range(0, len(os.listdir(".\\temp\\"))):
     feature = numB.reshape(1, 16)  # 16位向量作为特征储存
     # extra.xls_append("feature.xls", fea)
     fea[i] = feature[0]
-shutil.rmtree(".\\temp\\")
+shutil.rmtree(".\\temp\\")  # 删除临时保存的字符图片
+
+
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
