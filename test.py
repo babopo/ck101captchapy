@@ -1,43 +1,40 @@
-# just for test
-import numpy as np
-import os
-import cv2
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file 'test.ui'
+#
+# Created by: PyQt5 UI code generator 5.8.2
+#
+# WARNING! All changes made in this file will be lost!
 
-def filename(file):  # 读取目录下特定顺序文件
-    path = ".\\temp\\"
-    all_files = os.listdir(path)
-    return all_files[file]
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-for i in range(0, len(os.listdir(".\\temp\\"))):
-    temp = os.path.join(".\\temp\\", filename(i))
-    I = cv2.imread(temp, 0)
-    windowname = str(i)
-    cv2.imshow(windowname, I)
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(370, 250, 81, 18))
+        self.label.setObjectName("label")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(370, 420, 112, 34))
+        self.pushButton.setObjectName("pushButton")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 30))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
 
-img = cv2.imread('1.png')
-# cv2.imshow('origin image', img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-plt.imshow(img)
-plt.show()
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label.setText(_translate("MainWindow", "test"))
+        self.pushButton.setText(_translate("MainWindow", "PushButton"))
 
-img = np.array(img)
-if img.ndim == 3:
-    img = img[:, :, 0]
-# plt.subplot(221)
-# plt.imshow(img)
-# plt.subplot(222)
-# plt.imshow(img, cmap ='gray')
-# plt.subplot(223)
-# plt.imshow(img, cmap = plt.cm.gray)
-# plt.subplot(224)
-# plt.imshow(img, cmap = plt.cm.gray_r)
-# plt.show()
-
-cv2.imshow('origin image', img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
