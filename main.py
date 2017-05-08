@@ -10,6 +10,7 @@ from skimage import morphology
 from matplotlib import pyplot as plt
 import shutil
 import extra  # 自定义函数
+import train
 
 
 def filename(file):  # 读取目录下特定顺序文件
@@ -20,7 +21,7 @@ def filename(file):  # 读取目录下特定顺序文件
 
 img = cv2.imread('0.png')
 
-cv2.imshow('origin image', img)
+# cv2.imshow('origin image', img)
 
 lab_img = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)  # 转LAB空间
 m, n, z = lab_img.shape
@@ -29,8 +30,13 @@ m, n, z = lab_img.shape
 samples = lab_img.reshape(-1, 3)
 samples = np.float32(samples)
 
-cv2.imshow('lab image', lab_img)
+# cv2.imshow('lab image', lab_img)
 
+#################
+
+# 预处理
+
+#################
 # kmeans
 K = 45  # 簇数
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)  # 迭代终止条件，满足迭代10次或精度为1.0则停止
@@ -77,12 +83,19 @@ for i in range(K):
                     cut[row][col] = LAB_BW[high[0][0] + row][width[0][0] + col]
             pos = width[0][0] / 120
             cut_n = extra.normal(cut).astype(float)  # 转为float类型以便opencv显示
-            cv2.imshow(windowname, cut_n)
+            # plt.imshow(cut_n, cmap=plt.cm.gray_r)
+            # plt.show()
             savename = ".\\temp\\" + str(pos) + ".png"  # 相对路径，方便修改
             misc.imsave(savename, cut_n)  # 将array保存为图像
+#################
+
+# 特征提取
+# warning : 数值不对啊
+#################
 # extra.xls_clear("feature.xls")
-fea = np.zeros([4, 16]).astype(int)
-for i in range(0, len(os.listdir(".\\temp\\"))):
+num = len(os.listdir(".\\temp\\"))  # 由实验得分离出的字符数不一定为4个
+fea = np.zeros([num, 16]).astype(int)
+for i in range(num):
     temp = os.path.join(".\\temp\\", filename(i))
     I = cv2.imread(temp, 0)  # 单个字符图像，单通道读取
     m_s, n_s = I.shape  # 提取4*4粗网格特征，统计每个网格黑点数
@@ -97,8 +110,17 @@ for i in range(0, len(os.listdir(".\\temp\\"))):
     # extra.xls_append("feature.xls", fea)
     fea[i] = feature[0]
 shutil.rmtree(".\\temp\\")  # 删除临时保存的字符图片
+#################
 
+# 字符识别
 
-
+#################
+dataX, dataY = train.samples()
+dataY = extra.b2d(dataY)
+Kn = 3  # knn中的k值
+for i in range(num):
+    resultlabel = extra.knn(fea[i], dataX, dataY, Kn)
+    res = extra.sort(resultlabel)
+    print(res)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

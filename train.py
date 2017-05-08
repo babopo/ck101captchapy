@@ -14,8 +14,8 @@ def samples():
         sheets = book.sheet_by_index(0)
         rows = sheets.nrows
         cols = sheets.ncols
-        sam = np.zeros([rows, 16])
-        lab = np.zeros([rows, 5])  # 样本中的标签用五位二进制储存
+        sam = np.zeros([rows, 16]).astype(int)
+        lab = np.zeros([rows, 5]).astype(int)  # 样本中的标签用五位二进制储存
         for i in range(rows):
             for j in range(0, 16):
                 sam[i][j] = sheets.cell_value(i, j)
